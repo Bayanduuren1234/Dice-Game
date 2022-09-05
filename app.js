@@ -1,4 +1,5 @@
 // Global хувьсагчид
+var isNewGame;
 // Тоглогчийн ээлжийг хадгална
 var activePlayer;
 
@@ -20,6 +21,8 @@ function initGame() {
   scores = [0, 0];
 
   roundScore = 0;
+
+  isNewGame = true;
 
   var diceNumber = Math.floor(Math.random() * 6) + 1;
 
@@ -46,39 +49,46 @@ function initGame() {
 
 // Шоог шидэх эвент листенер
 document.querySelector(".btn-roll").addEventListener("click", function () {
-  var diceNumber = Math.floor(Math.random() * 6) + 1;
+  if (isNewGame) {
+    var diceNumber = Math.floor(Math.random() * 6) + 1;
 
-  diceDom.style.display = "block";
-  diceDom.src = "dice-" + diceNumber + ".png";
+    diceDom.style.display = "block";
+    diceDom.src = "dice-" + diceNumber + ".png";
 
-  if (diceNumber !== 1) {
-    roundScore += diceNumber;
-    document.getElementById("current-" + activePlayer).textContent = roundScore;
-  } else {
-    switchToNextPlayer();
+    if (diceNumber !== 1) {
+      roundScore += diceNumber;
+      document.getElementById("current-" + activePlayer).textContent =
+        roundScore;
+    } else {
+      switchToNextPlayer();
+    }
   }
 });
 
 // Hold button-ийг ашиглах эвент листенер
 document.querySelector(".btn-hold").addEventListener("click", function () {
-  scores[activePlayer] += roundScore;
+  if (isNewGame) {
+    scores[activePlayer] += roundScore;
 
-  document.getElementById("score-" + activePlayer).textContent =
-    scores[activePlayer];
+    document.getElementById("score-" + activePlayer).textContent =
+      scores[activePlayer];
 
-  document.getElementById("current-" + activePlayer).textContent = 0;
-  roundScore = 0;
+    document.getElementById("current-" + activePlayer).textContent = 0;
+    roundScore = 0;
 
-  if (scores[activePlayer] >= 10) {
-    document.getElementById("name-" + activePlayer).textContent = "WINNER!!!";
-    document
-      .querySelector(".player-" + activePlayer + "-panel")
-      .classList.add("winner");
-    document
-      .querySelector(".player-" + activePlayer + "-panel")
-      .classList.remove("active");
-  } else {
-    switchToNextPlayer();
+    if (scores[activePlayer] >= 100) {
+      isNewGame = false;
+      document.getElementById("name-" + activePlayer).textContent = "WINNER!!!";
+      document
+        .querySelector(".player-" + activePlayer + "-panel")
+        .classList.add("winner");
+      document
+        .querySelector(".player-" + activePlayer + "-panel")
+        .classList.remove("active");
+      diceDom.style.display = "none";
+    } else {
+      switchToNextPlayer();
+    }
   }
 });
 // Тоглогчийн ээлжийг солих function
